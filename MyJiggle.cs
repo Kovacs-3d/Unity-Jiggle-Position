@@ -7,10 +7,10 @@ public class MyJiggle : MonoBehaviour
     Vector3 dynamicPos = new Vector3();
 
     // Dynamics settings
-    public float bStiffness = 0.1f;
-    public float bMass = 0.9f;
-    public float bDamping = 0.75f;
-    public float bGravity = 0.75f;
+    public float bStiffness = 5;
+    public float bMass = 5;
+    public float bDamping = 10;
+    //public float bGravity = 0.75f;
 
     // Dynamics variables
     Vector3 force = new Vector3();
@@ -21,41 +21,34 @@ public class MyJiggle : MonoBehaviour
 
     void Awake()
     {
-        /*QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = -1;*/
         dynamicPos = transform.position;
         Startlocalpos = this.transform.localPosition;
+    }
+    
+    private void Update()
+    {
+        // Calculate target position
+        targetPos = this.transform.parent.TransformPoint(Startlocalpos);
     }
 
     void LateUpdate()
     {
-        // Calculate target position
-        targetPos = this.transform.parent.TransformPoint(Startlocalpos);
-
         // Calculate force, acceleration, and velocity per X, Y and Z
-        force.x = (targetPos.x - dynamicPos.x) * bStiffness;
+        force.x = (targetPos.x - dynamicPos.x) * bStiffness * Time.deltaTime;
         acc.x = force.x / bMass;
-        vel.x += acc.x * (1 - bDamping);
+        vel.x += acc.x * (10 - bDamping) * Time.deltaTime;
 
-        force.y = (targetPos.y - dynamicPos.y) * bStiffness;
+        force.y = (targetPos.y - dynamicPos.y) * bStiffness * Time.deltaTime;
         //force.y -= bGravity / 10; // Add some gravity
         acc.y = force.y / bMass;
-        vel.y += acc.y * (1 - bDamping);
+        vel.y += acc.y * (100 - bDamping) * Time.deltaTime;
 
-        force.z = (targetPos.z - dynamicPos.z) * bStiffness;
+        force.z = (targetPos.z - dynamicPos.z) * bStiffness * Time.deltaTime;
         acc.z = force.z / bMass;
-        vel.z += acc.z * (1 - bDamping);
+        vel.z += acc.z * (100 - bDamping) * Time.deltaTime;
 
         // Update dynamic postion
         dynamicPos += vel + force;
         this.transform.position = dynamicPos;
     }
-
-    void OnDrawGizmos()
-    {
-        // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(this.transform.parent.TransformPoint(Startlocalpos), 0.01f);
-    }
-
 }
